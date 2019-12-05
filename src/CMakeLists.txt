@@ -1,4 +1,4 @@
-add_executable(Main main.cpp)
+add_executable(Main WIN32 main.cpp)
 target_include_directories(Main PRIVATE
                            ${BX_DIR}/include
                            ${BX_DIR}/include/compat/msvc
