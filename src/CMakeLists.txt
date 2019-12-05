@@ -1,0 +1,12 @@
+add_executable(Main main.cpp)
+target_include_directories(Main PRIVATE
+                           ${BX_DIR}/include
+                           ${BX_DIR}/include/compat/msvc
+   	                       ${BGFX_DIR}/include)
+target_link_libraries(Main
+                      debug ${BGFX_DIR}/lib/bgfxDebug.lib        optimized ${BGFX_DIR}/lib/bgfxRelease.lib
+                      debug ${BGFX_DIR}/lib/bimg_decodeDebug.lib optimized ${BGFX_DIR}/lib/bimg_decodeRelease.lib
+                      debug ${BGFX_DIR}/lib/bimgDebug.lib        optimized ${BGFX_DIR}/lib/bimgRelease.lib
+                      debug ${BGFX_DIR}/lib/bxDebug.lib          optimized ${BGFX_DIR}/lib/bxRelease.lib)
+set_target_properties(Main PROPERTIES
+                      CXX_STANDARD 17)
