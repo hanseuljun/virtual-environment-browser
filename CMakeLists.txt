@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 project(VirtualEnvironmentBrowser)
 
+include_directories(${PROJECT_SOURCE_DIR}/src)
+
 #find_path(VCPKG_INCLUDE_DIR NAMES spdlog.h PATHSUFFICES)
 #set(VCPKG_INCLUDE_DIR ${VCPKG_INCLUDE_DIR}/..)
 #find_path(VCPKG_LIB_DIR NAMES spdlog.lib)
@@ -31,4 +33,5 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 
 add_subdirectory(src)
+add_subdirectory(bgfx_examples)
 add_subdirectory(v8_examples)
