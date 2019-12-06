@@ -149,11 +149,8 @@ bool ExecuteString(v8::Isolate* isolate, v8::Local<v8::String> source,
                 v8::String::Utf8Value str(isolate, result);
                 const char* cstr = ToCString(str);
                 //printf("%s\n", cstr);
-                bgfx::dbgTextPrintf(0, 6, 0x0f, "Defined Result: %s", cstr);
+                bgfx::dbgTextPrintf(0, 6, 0x0f, "Result: %s", cstr);
             }
-            v8::String::Utf8Value str(isolate, result);
-            const char* cstr = ToCString(str);
-            bgfx::dbgTextPrintf(0, 6, 0x0f, "Undefined Result: %s", cstr);
             return true;
         }
     }
@@ -313,7 +310,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
             const char* source_string = ToCString(source_value);
             bgfx::dbgTextPrintf(0, 5, 0x0f, "Source: %s", source_string);
 
-            if (!ExecuteString(isolate, source, false, false)) {
+            if (!ExecuteString(isolate, source, true, true)) {
                 isolate->ThrowException(
                     v8::String::NewFromUtf8(isolate, "Error executing file",
                                             v8::NewStringType::kNormal).ToLocalChecked());
