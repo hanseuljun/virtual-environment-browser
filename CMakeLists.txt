@@ -21,6 +21,7 @@ set(V8_DEBUG ${V8_DIR}/debug)
 set(V8_RELEASE ${V8_DIR}/release)
 
 # V8 requires the path to some binary files and the below definition is for finding those files.
+add_definitions(-DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
 add_definitions(-DV8_DIR=\"${V8_DIR}\")
 
 set(EXAMPLES_INCLUDE ${VCPKG_INCLUDE_DIR}
