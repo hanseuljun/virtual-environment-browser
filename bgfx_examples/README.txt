@@ -1,0 +1,1 @@
+The goal of the files in this directory is to port the examples of bgfx using VirtualEnvironmentBrowser and javascript, and to make VirtualEnvironmentBrowser functional during the porting process.

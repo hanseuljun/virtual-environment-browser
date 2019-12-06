@@ -12,8 +12,6 @@ set(VCPKG_DIR ${PROJECT_SOURCE_DIR}/vcpkg/installed/x64-windows-static)
 set(VCPKG_INCLUDE_DIR ${VCPKG_DIR}/include)
 set(VCPKG_LIB_DIR_DEBUG ${VCPKG_DIR}/debug/lib)
 set(VCPKG_LIB_DIR_RELEASE ${VCPKG_DIR}/lib)
-message(${VCPKG_INCLUDE_DIR})
-message(${VCPKG_LIB_DIR})
 
 set(BX_DIR ${PROJECT_SOURCE_DIR}/third_party/bx)
 set(BGFX_DIR ${PROJECT_SOURCE_DIR}/third_party/bgfx)
