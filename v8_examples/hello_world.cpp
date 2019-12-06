@@ -6,12 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libplatform/libplatform.h"
-#include "v8.h"
-#include "v8_example_helper.h"
+#include "veb_util.h"
 
 int main(int argc, char* argv[]) {
-    std::string v8_path = find_v8_path();
+    std::string v8_path = veb::find_v8_path();
     // Initialize V8.
     v8::V8::InitializeICUDefaultLocation(v8_path.c_str());
     v8::V8::InitializeExternalStartupData(v8_path.c_str());

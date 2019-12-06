@@ -35,7 +35,7 @@
 #include <map>
 #include <string>
 
-#include "v8_example_helper.h"
+#include "veb_util.h"
 
 using std::map;
 using std::pair;
@@ -698,7 +698,7 @@ void PrintMap(map<string, string>* m) {
 
 
 int main(int argc, char* argv[]) {
-    std::string v8_path = find_v8_path();
+    std::string v8_path = veb::find_v8_path();
     v8::V8::InitializeICUDefaultLocation(v8_path.c_str());
     v8::V8::InitializeExternalStartupData(v8_path.c_str());
     std::unique_ptr<v8::Platform> platform = v8::platform::NewDefaultPlatform();

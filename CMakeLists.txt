@@ -23,6 +23,12 @@ set(V8_RELEASE ${V8_DIR}/release)
 # V8 requires the path to some binary files and the below definition is for finding those files.
 add_definitions(-DV8_DIR=\"${V8_DIR}\")
 
+set(EXAMPLES_INCLUDE ${VCPKG_INCLUDE_DIR}
+                     ${V8_DIR}/include
+                     ${BX_DIR}/include
+                     ${BX_DIR}/include/compat/msvc
+                     ${BGFX_DIR}/include)
+
 # V8 is built with the static runtime library and matching this project V8.
 # Matching the type of runtime library is mandatory.
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
