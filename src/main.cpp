@@ -46,6 +46,11 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR pCm
 
     ShowWindow(hwnd, nCmdShow);
 
+    RECT rect;
+    if (!GetWindowRect(hwnd, &rect)) {
+        return 0;
+    }
+
     bgfx::PlatformData pd;
     bx::memSet(&pd, 0, sizeof(pd));
     pd.nwh = hwnd;
@@ -58,7 +63,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR pCm
 
 
     bgfx::Init init;
-    init.type = bgfx::RendererType::Direct3D11;
+    init.type = bgfx::RendererType::Vulkan;
     init.vendorId = BGFX_PCI_ID_NONE;
     init.resolution.width = width;
     init.resolution.height = height;
