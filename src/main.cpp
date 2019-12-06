@@ -10,6 +10,8 @@
 #include "bx/bx.h"
 #include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/msvc_sink.h"
 
 LRESULT CALLBACK MessageCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -23,6 +25,10 @@ LRESULT CALLBACK MessageCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR pCmdLine, _In_ int nCmdShow)
 {
+    auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
+    auto logger = std::make_shared<spdlog::logger>("msvc_logger", sink);
+    logger->info("Hello, {}!", "World");
+
     WNDCLASS wc = { };
     wc.lpfnWndProc = MessageCallback;
     wc.hInstance = hInstance;

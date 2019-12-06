@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.13)
 project(VirtualEnvironmentBrowser)
 
+#find_path(VCPKG_INCLUDE_DIR NAMES spdlog.h PATHSUFFICES)
+#set(VCPKG_INCLUDE_DIR ${VCPKG_INCLUDE_DIR}/..)
+#find_path(VCPKG_LIB_DIR NAMES spdlog.lib)
+
+# The above code finding ${VCPKG_INCLUDE_DIR} and ${VCPKG_LIB_DIR} using find_path does not work for x64-windows-static.
+set(VCPKG_DIR ${PROJECT_SOURCE_DIR}/vcpkg/installed/x64-windows-static)
+set(VCPKG_INCLUDE_DIR ${VCPKG_DIR}/include)
+set(VCPKG_LIB_DIR_DEBUG ${VCPKG_DIR}/debug/lib)
+set(VCPKG_LIB_DIR_RELEASE ${VCPKG_DIR}/lib)
+message(${VCPKG_INCLUDE_DIR})
+message(${VCPKG_LIB_DIR})
+
 set(BX_DIR ${PROJECT_SOURCE_DIR}/third_party/bx)
 set(BGFX_DIR ${PROJECT_SOURCE_DIR}/third_party/bgfx)
 
