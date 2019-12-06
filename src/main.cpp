@@ -57,19 +57,26 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ PWSTR pCm
         return 0;
     }
 
+    logger->info("rect.left: {}", rect.left);
+    logger->info("rect.top: {}", rect.top);
+    logger->info("rect.right: {}", rect.right);
+    logger->info("rect.bottom: {}", rect.bottom);
+
     bgfx::PlatformData pd;
     bx::memSet(&pd, 0, sizeof(pd));
     pd.nwh = hwnd;
     bgfx::setPlatformData(pd);
 
-    uint32_t width = 1280;
-    uint32_t height = 720;
+    uint32_t width = rect.right - rect.left;
+    uint32_t height = rect.bottom - rect.top;
     uint32_t debug = BGFX_DEBUG_TEXT;
     uint32_t reset = BGFX_RESET_VSYNC;
 
+    logger->info("width: {}", width);
+    logger->info("height: {}", height);
 
     bgfx::Init init;
-    init.type = bgfx::RendererType::Vulkan;
+    init.type = bgfx::RendererType::Direct3D11;
     init.vendorId = BGFX_PCI_ID_NONE;
     init.resolution.width = width;
     init.resolution.height = height;
