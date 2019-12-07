@@ -5,7 +5,7 @@
 #include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
 #include "veb_util.h"
-#include "veb_bgfx_object_template.h"
+#include "veb_bgfx_template.h"
 
 LRESULT CALLBACK MessageCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -238,10 +238,12 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         // built-in global functions.
         v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
         //v8::Local<v8::ObjectTemplate> bgfx = v8::ObjectTemplate::New(isolate);
-        v8::Local<v8::ObjectTemplate> bgfx = veb::create_bgfx_object_template(isolate);
+
+        veb::BgfxTemplate bgfx_template(isolate);
+
         global->Set(v8::String::NewFromUtf8(isolate, "bgfx", v8::NewStringType::kNormal)
                     .ToLocalChecked(),
-                    bgfx);
+                    bgfx_template.object_template());
         //bgfx->Set(v8::String::NewFromUtf8(isolate, "dbgTextPrintf", v8::NewStringType::kNormal)
         //          .ToLocalChecked(),
         //          v8::FunctionTemplate::New(isolate, BgfxDbgTextPrintfCallback));
