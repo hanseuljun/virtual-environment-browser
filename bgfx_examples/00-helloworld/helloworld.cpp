@@ -71,17 +71,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     create_params.array_buffer_allocator =
         v8::ArrayBuffer::Allocator::NewDefaultAllocator();
     v8::Isolate* isolate = v8::Isolate::New(create_params);
-
-    // Run the message loop.
-    MSG msg = { };
-    while (GetMessage(&msg, NULL, 0, 0))
     {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-
-        bgfx::setViewRect(0, 0, 0, uint16_t(width), uint16_t(height));
-        bgfx::touch(0);
-
         v8::Isolate::Scope isolate_scope(isolate);
         // Create a stack-allocated handle scope.
         v8::HandleScope handle_scope(isolate);
@@ -89,7 +79,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         // Create a template for the global object where we set the
         // built-in global functions.
         v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
-        //v8::Local<v8::ObjectTemplate> bgfx = v8::ObjectTemplate::New(isolate);
 
         veb::BgfxTemplate bgfx_template(isolate);
 
@@ -101,14 +90,24 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         v8::Local<v8::Context> context = v8::Context::New(isolate, nullptr, global);
         // Enter the context for compiling and running the hello world script.
         v8::Context::Scope context_scope(context);
+
+        v8::Local<v8::String> source;
+        if (!veb::read_file(isolate, javascript_file_path.c_str()).ToLocal(&source)) {
+            isolate->ThrowException(
+                v8::String::NewFromUtf8(isolate, "Error loading file",
+                                        v8::NewStringType::kNormal).ToLocalChecked());
+            return 1;
+        }
+
+        // Run the message loop.
+        MSG msg = { };
+        while (GetMessage(&msg, NULL, 0, 0))
         {
-            v8::Local<v8::String> source;
-            if (!veb::read_file(isolate, javascript_file_path.c_str()).ToLocal(&source)) {
-                isolate->ThrowException(
-                    v8::String::NewFromUtf8(isolate, "Error loading file",
-                                            v8::NewStringType::kNormal).ToLocalChecked());
-                return 1;
-            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+
+            bgfx::setViewRect(0, 0, 0, uint16_t(width), uint16_t(height));
+            bgfx::touch(0);
 
             if (!veb::execute_string(isolate, source, true, true)) {
                 isolate->ThrowException(
@@ -116,9 +115,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
                                             v8::NewStringType::kNormal).ToLocalChecked());
                 return 1;
             }
-        }
 
-        bgfx::frame();
+            bgfx::frame();
+        }
     }
 
     // Dispose the isolate and tear down V8.
