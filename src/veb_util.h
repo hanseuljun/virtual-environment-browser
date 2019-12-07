@@ -17,7 +17,7 @@ namespace veb
 {
 std::string find_v8_path();
 std::unique_ptr<spdlog::logger> create_msvc_logger();
-HWND init_win32_window(HINSTANCE hInstance, int nCmdShow, WNDPROC callback);
+HWND init_win32_window(HINSTANCE hInstance, int nCmdShow, WNDPROC callback, int width, int height);
 v8::MaybeLocal<v8::String> read_file(v8::Isolate* isolate, const char* name);
 const char* to_c_string(const v8::String::Utf8Value& value);
 void report_exception(v8::Isolate* isolate, v8::TryCatch* try_catch);

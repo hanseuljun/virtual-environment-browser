@@ -22,7 +22,7 @@ std::unique_ptr<spdlog::logger> create_msvc_logger()
     return std::make_unique<spdlog::logger>("msvc_logger", std::move(sink));
 }
 
-HWND init_win32_window(HINSTANCE hInstance, int nCmdShow, WNDPROC callback)
+HWND init_win32_window(HINSTANCE hInstance, int nCmdShow, WNDPROC callback, int width, int height)
 {
     WNDCLASS wc = {};
     wc.lpfnWndProc = callback;
@@ -32,18 +32,18 @@ HWND init_win32_window(HINSTANCE hInstance, int nCmdShow, WNDPROC callback)
     RegisterClass(&wc);
 
     // Create the window.
-    HWND hwnd = CreateWindowEx(0,                              // Optional window styles.
-                               wc.lpszClassName,               // Window class
-                               L"Virtual Environment Browser", // Window text
-                               WS_OVERLAPPEDWINDOW,            // Window style 
-                               CW_USEDEFAULT,                  // Size and position
+    HWND hwnd = CreateWindowEx(0,                                   // Optional window styles.
+                               wc.lpszClassName,                    // Window class
+                               L"Virtual Environment Browser",      // Window text
+                               WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, // Window style 
+                               CW_USEDEFAULT,                       // Size and position
                                CW_USEDEFAULT,
-                               CW_USEDEFAULT,
-                               CW_USEDEFAULT,
-                               NULL,                           // Parent window    
-                               NULL,                           // Menu
-                               hInstance,                      // Instance handle
-                               NULL);                          // Additional application data
+                               width,
+                               height,
+                               NULL,                                // Parent window    
+                               NULL,                                // Menu
+                               hInstance,                           // Instance handle
+                               NULL);                               // Additional application data
 
     ShowWindow(hwnd, nCmdShow);
     return hwnd;

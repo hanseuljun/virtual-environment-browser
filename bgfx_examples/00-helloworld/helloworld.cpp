@@ -19,6 +19,9 @@ LRESULT CALLBACK MessageCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PWSTR pCmdLine, _In_ int nCmdShow)
 {
+    const int WIDTH = 1280;
+    const int HEIGHT = 720;
+
     std::string v8_path = veb::find_v8_path();
     // Initialize V8.
     v8::V8::InitializeICUDefaultLocation(v8_path.c_str());
@@ -33,27 +36,20 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     std::string javascript_file_path = PROJECT_SOURCE_DIR;
     javascript_file_path += "/bgfx_examples/00-helloworld/helloworld.js";
 
-    HWND hwnd = veb::init_win32_window(hInstance, nCmdShow, MessageCallback);
-
-    RECT rect;
-    if (!GetWindowRect(hwnd, &rect)) {
-        return 1;
-    }
+    HWND hwnd = veb::init_win32_window(hInstance, nCmdShow, MessageCallback, WIDTH, HEIGHT);
 
     bgfx::PlatformData pd;
     pd.nwh = hwnd;
     bgfx::setPlatformData(pd);
 
-    uint32_t width = rect.right - rect.left;
-    uint32_t height = rect.bottom - rect.top;
     uint32_t debug = BGFX_DEBUG_TEXT;
     uint32_t reset = BGFX_RESET_VSYNC;
 
     bgfx::Init init;
     init.type = bgfx::RendererType::Count; // This makes bgfx to use a default graphics API. For Windows, Direct3D11.
     init.vendorId = BGFX_PCI_ID_NONE; // This also makes bgfx to pick a GPU.
-    init.resolution.width = width;
-    init.resolution.height = height;
+    init.resolution.width = WIDTH;
+    init.resolution.height = HEIGHT;
     init.resolution.reset = reset;
     bgfx::init(init);
 
@@ -106,7 +102,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
             TranslateMessage(&msg);
             DispatchMessage(&msg);
 
-            bgfx::setViewRect(0, 0, 0, uint16_t(width), uint16_t(height));
+            bgfx::setViewRect(0, 0, 0, uint16_t(WIDTH), uint16_t(HEIGHT));
             bgfx::touch(0);
 
             if (!veb::execute_string(isolate, source, true, true)) {
