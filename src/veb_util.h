@@ -10,11 +10,7 @@
 
 #include <memory>
 
-#include "libplatform/libplatform.h"
 #include "v8.h"
-#include "bx/bx.h"
-#include "bgfx/bgfx.h"
-#include "bgfx/platform.h"
 #include "spdlog/spdlog.h"
 
 namespace veb

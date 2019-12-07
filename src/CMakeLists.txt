@@ -1,4 +1,6 @@
-add_library(VirtualEnvironmentBrowserLibrary veb_util.h veb_util.cpp)
+add_library(VirtualEnvironmentBrowserLibrary
+            veb_bgfx_object_template.h veb_bgfx_object_template.cpp
+            veb_util.h veb_util.cpp)
 target_include_directories(VirtualEnvironmentBrowserLibrary PRIVATE
                            ${VCPKG_INCLUDE_DIR}
                            ${V8_DIR}/include
