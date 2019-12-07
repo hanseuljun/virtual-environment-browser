@@ -11,10 +11,8 @@ public:
     BgfxTemplate(v8::Isolate* isolate);
     const v8::Local<v8::ObjectTemplate>& object_template() const { return object_template_; }
 private:
-    static void frameCallback(const v8::FunctionCallbackInfo<v8::Value>& args);
     static void dbgTextPrintfCallback(const v8::FunctionCallbackInfo<v8::Value>& args);
     static void getStatsCallback(const v8::FunctionCallbackInfo<v8::Value>& args);
-    static void touchCallback(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 private:
     v8::Local<v8::ObjectTemplate> object_template_;

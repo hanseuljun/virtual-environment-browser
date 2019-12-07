@@ -9,19 +9,10 @@ BgfxTemplate::BgfxTemplate(v8::Isolate* isolate)
     : object_template_(v8::ObjectTemplate::New(isolate)),
       bgfx_stats_template_(isolate)
 {
-    object_template_->Set(v8::String::NewFromUtf8(isolate, "frame").ToLocalChecked(),
-                          v8::FunctionTemplate::New(isolate, frameCallback));
     object_template_->Set(v8::String::NewFromUtf8(isolate, "dbgTextPrintf").ToLocalChecked(),
                           v8::FunctionTemplate::New(isolate, dbgTextPrintfCallback));
     object_template_->Set(v8::String::NewFromUtf8(isolate, "getStats").ToLocalChecked(),
                           v8::FunctionTemplate::New(isolate, getStatsCallback, v8::External::New(isolate, this)));
-    object_template_->Set(v8::String::NewFromUtf8(isolate, "touch").ToLocalChecked(),
-                          v8::FunctionTemplate::New(isolate, touchCallback));
-}
-
-void BgfxTemplate::frameCallback(const v8::FunctionCallbackInfo<v8::Value>& args)
-{
-    bgfx::frame();
 }
 
 void BgfxTemplate::dbgTextPrintfCallback(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -53,18 +44,5 @@ void BgfxTemplate::getStatsCallback(const v8::FunctionCallbackInfo<v8::Value>& a
     v8::Local<v8::Object> stats_object = bgfx_template->bgfx_stats_template_.object_template()->NewInstance(context).ToLocalChecked();
     stats_object->SetInternalField(0, v8::External::New(isolate, const_cast<bgfx::Stats*>(stats)));
     args.GetReturnValue().Set(stats_object);
-}
-
-void BgfxTemplate::touchCallback(const v8::FunctionCallbackInfo<v8::Value>& args)
-{
-    if (args.Length() < 1)
-        return;
-
-    v8::Isolate* isolate = args.GetIsolate();
-    v8::HandleScope scope(isolate);
-    v8::Local<v8::Context> context(isolate->GetCurrentContext());
-
-    bgfx::ViewId id = static_cast<bgfx::ViewId>(args[0]->IntegerValue(context).ToChecked());
-    bgfx::touch(id);
 }
 }
