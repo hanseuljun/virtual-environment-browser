@@ -1,4 +1,5 @@
 add_library(VirtualEnvironmentBrowserLibrary
+            veb_window_template.h veb_window_template.cpp
             veb_bgfx_template.h veb_bgfx_template.cpp
             veb_bgfx_stats_template.h veb_bgfx_stats_template.cpp
             veb_util.h veb_util.cpp)
