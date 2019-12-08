@@ -10,7 +10,7 @@
 #define V8PP_UTILITY_HPP_INCLUDED
 
 #include <functional>
-#include <string>
+#include <string_view>
 #include <tuple>
 #include <type_traits>
 
@@ -25,6 +25,8 @@ struct tuple_tail<std::tuple<Head, Tail...>>
 	using type = std::tuple<Tail...>;
 };
 
+struct none{};
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Function traits
@@ -32,11 +34,22 @@ struct tuple_tail<std::tuple<Head, Tail...>>
 template<typename F>
 struct function_traits;
 
+template<>
+struct function_traits<none>
+{
+	using return_type = void;
+	using arguments = std::tuple<>;
+	template<typename D>
+	using pointer_type = void;
+};
+
 template<typename R, typename ...Args>
 struct function_traits<R (Args...)>
 {
 	using return_type = R;
 	using arguments = std::tuple<Args...>;
+	template<typename D>
+	using pointer_type = R (*)(Args...);
 };
 
 // function pointer
@@ -44,7 +57,6 @@ template<typename R, typename ...Args>
 struct function_traits<R (*)(Args...)>
 	: function_traits<R (Args...)>
 {
-	using pointer_type = R (*)(Args...);
 };
 
 // member function pointer
@@ -52,7 +64,8 @@ template<typename C, typename R, typename ...Args>
 struct function_traits<R (C::*)(Args...)>
 	: function_traits<R (C&, Args...)>
 {
-	template<typename D = C>
+	using class_type = C;
+	template<typename D>
 	using pointer_type = R (D::*)(Args...);
 };
 
@@ -61,7 +74,8 @@ template<typename C, typename R, typename ...Args>
 struct function_traits<R (C::*)(Args...) const>
 	: function_traits<R (C const&, Args...)>
 {
-	template<typename D = C>
+	using class_type = C const;
+	template<typename D>
 	using pointer_type = R (D::*)(Args...) const;
 };
 
@@ -70,7 +84,8 @@ template<typename C, typename R, typename ...Args>
 struct function_traits<R (C::*)(Args...) volatile>
 	: function_traits<R (C volatile&, Args...)>
 {
-	template<typename D = C>
+	using class_type = C volatile;
+	template<typename D>
 	using pointer_type = R (D::*)(Args...) volatile;
 };
 
@@ -79,7 +94,8 @@ template<typename C, typename R, typename ...Args>
 struct function_traits<R (C::*)(Args...) const volatile>
 	: function_traits<R (C const volatile&, Args...)>
 {
-	template<typename D = C>
+	using class_type = C const volatile;
+	template<typename D>
 	using pointer_type = R (D::*)(Args...) const volatile;
 };
 
@@ -88,7 +104,8 @@ template<typename C, typename R>
 struct function_traits<R (C::*)>
 	: function_traits<R (C&)>
 {
-	template<typename D = C>
+	using class_type = C;
+	template<typename D>
 	using pointer_type = R (D::*);
 };
 
@@ -97,7 +114,8 @@ template<typename C, typename R>
 struct function_traits<const R (C::*)>
 	: function_traits<R (C const&)>
 {
-	template<typename D = C>
+	using class_type = C const;
+	template<typename D>
 	using pointer_type = const R (D::*);
 };
 
@@ -106,7 +124,8 @@ template<typename C, typename R>
 struct function_traits<volatile R (C::*)>
 	: function_traits<R (C volatile&)>
 {
-	template<typename D = C>
+	using class_type = C volatile;
+	template<typename D>
 	using pointer_type = volatile R (D::*);
 };
 
@@ -115,7 +134,8 @@ template<typename C, typename R>
 struct function_traits<const volatile R (C::*)>
 	: function_traits<R (C const volatile&)>
 {
-	template<typename D = C>
+	using class_type = C const volatile;
+	template<typename D>
 	using pointer_type = const volatile R (D::*);
 };
 
@@ -130,6 +150,8 @@ private:
 public:
 	using return_type = typename callable_traits::return_type;
 	using arguments = typename tuple_tail<typename callable_traits::arguments>::type;
+	template<typename D>
+	using pointer_type = typename callable_traits::template pointer_type<D>;
 };
 
 template<typename F>
@@ -139,8 +161,7 @@ template<typename F>
 struct function_traits<F&&> : function_traits<F> {};
 
 template<typename F>
-using is_void_return = std::is_same<void,
-	typename function_traits<F>::return_type>;
+inline constexpr bool is_void_return = std::is_same_v<void, typename function_traits<F>::return_type>;
 
 template<typename F, bool is_class>
 struct is_callable_impl
@@ -165,60 +186,18 @@ private:
 
 	using type = decltype(test<derived>(0));
 public:
-	static const bool value = type::value;
+	static constexpr bool value = type::value;
 };
 
 template<typename F>
 using is_callable = std::integral_constant<bool,
 	is_callable_impl<F, std::is_class<F>::value>::value>;
 
-#if (__cplusplus > 201402L) || (defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 190023918)
-using std::index_sequence;
-using std::make_index_sequence;
-#else
-/////////////////////////////////////////////////////////////////////////////
-//
-// integer_sequence
-//
-template<typename T, T... I>
-struct integer_sequence
-{
-	using type = T;
-	static size_t size() { return sizeof...(I); }
-
-	template<T N>
-	using append = integer_sequence<T, I..., N>;
-
-	using next = append<sizeof...(I)>;
-};
-
-template<typename T, T Index, size_t N>
-struct sequence_generator
-{
-	using type = typename sequence_generator<T, Index - 1, N - 1>::type::next;
-};
-
-template<typename T, T Index>
-struct sequence_generator<T, Index, 0ul>
-{
-	using type = integer_sequence<T>;
-};
-
-template<size_t... I>
-using index_sequence = integer_sequence<size_t, I...>;
-
-template<typename T, T N>
-using make_integer_sequence = typename sequence_generator<T, N, N>::type;
-
-template<size_t N>
-using make_index_sequence = make_integer_sequence<size_t, N>;
-#endif
-
 /// Type information for custom RTTI
 class type_info
 {
 public:
-	std::string const& name() const { return name_; }
+	std::string_view name() const { return name_; }
 	bool operator==(type_info const& other) const { return name_ == other.name_; }
 	bool operator!=(type_info const& other) const { return name_ != other.name_; }
 private:
@@ -227,7 +206,7 @@ private:
 		: name_(name, size)
 	{
 	}
-	std::string name_;
+	std::string_view name_;
 };
 
 /// Get type information for type T

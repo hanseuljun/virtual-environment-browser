@@ -4,10 +4,11 @@ add_library(VirtualEnvironmentBrowserLibrary
             veb_util.h veb_util.cpp)
 target_include_directories(VirtualEnvironmentBrowserLibrary PRIVATE
                            ${VCPKG_INCLUDE_DIR}
-                           ${V8_DIR}/include
                            ${BX_DIR}/include
                            ${BX_DIR}/include/compat/msvc
-   	                       ${BGFX_DIR}/include)
+   	                       ${BGFX_DIR}/include
+                           ${V8_DIR}/include
+                           ${V8PP_DIR})
 target_link_libraries(VirtualEnvironmentBrowserLibrary PRIVATE
                       dbghelp.lib winmm.lib
                       debug ${V8_DEBUG}/v8_libbase.lib     optimized ${V8_RELEASE}/v8_libbase.lib

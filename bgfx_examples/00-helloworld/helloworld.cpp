@@ -6,6 +6,8 @@
 #include "bgfx/platform.h"
 #include "veb_util.h"
 #include "veb_bgfx_template.h"
+#include "v8pp/context.hpp"
+#include "v8pp/module.hpp"
 
 LRESULT CALLBACK MessageCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -15,6 +17,11 @@ LRESULT CALLBACK MessageCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
     }
 
     return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
+void dbgTextPrintfWrapper(uint16_t _x, uint16_t _y, uint8_t _attr, const char* _format)
+{
+    bgfx::dbgTextPrintf(_x, _y, _attr, _format);
 }
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PWSTR pCmdLine, _In_ int nCmdShow)
@@ -78,14 +85,24 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
         veb::BgfxTemplate bgfx_template(isolate);
 
-        global->Set(v8::String::NewFromUtf8(isolate, "bgfx", v8::NewStringType::kNormal)
-                    .ToLocalChecked(),
+        global->Set(v8::String::NewFromUtf8(isolate, "bgfx").ToLocalChecked(),
                     bgfx_template.object_template());
-
+        
         // Create a new context.
         v8::Local<v8::Context> context = v8::Context::New(isolate, nullptr, global);
+
+        //v8pp::module global(isolate);
+        //v8pp::module m(isolate);
+        //m.function("dbgTextPrintf", &dbgTextPrintfWrapper);
+        //global.submodule("bgfx", m);
+        //v8pp::context context(isolate);
+        
+        //global->Set(v8::String::NewFromUtf8(isolate, "v8pp").ToLocalChecked(), m.new_instance());
+        //isolate->GetCurrentContext()->Global()->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "v8pp").ToLocalChecked(), m.new_instance());
+
         // Enter the context for compiling and running the hello world script.
         v8::Context::Scope context_scope(context);
+
 
         v8::Local<v8::String> source;
         if (!veb::read_file(isolate, javascript_file_path.c_str()).ToLocal(&source)) {
